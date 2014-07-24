@@ -1,11 +1,14 @@
 dots <- function(...) {
-  eval(substitute(alist(...)))
+  eval(substitute(alist(...)))  #note substitude an eval
 }
 
+# question!
 named_dots <- function(...) {
   auto_name(dots(...))
 }
 
+
+#naming x if x has no names
 auto_names <- function(x) {
   nms <- names2(x)
   missing <- nms == ""
@@ -18,6 +21,7 @@ auto_names <- function(x) {
   nms
 }
 
+#
 deparse_trunc <- function(x, width = getOption("width")) {
   text <- deparse(x, width.cutoff = width)
   if (length(text) == 1 && nchar(text) < width) return(text)
@@ -25,26 +29,34 @@ deparse_trunc <- function(x, width = getOption("width")) {
   paste0(substr(text[1], 1, width - 3), "...")
 }
 
+#DONE
 auto_name <- function(x) {
   names(x) <- auto_names(x)
   x
 }
 
+#DONE
 is.lang <- function(x) {
   is.name(x) || is.atomic(x) || is.call(x)
 }
+
+#DONE
 is.lang.list <- function(x) {
   if (is.null(x)) return(TRUE)
 
   is.list(x) && all_apply(x, is.lang)
 }
+
+# note this usage!!
 on_failure(is.lang.list) <- function(call, env) {
   paste0(call$x, " is not a list containing only names, calls and atomic vectors")
 }
 
+#DONE
 only_has_names <- function(x, nms) {
   all(names(x) %in% nms)
 }
+
 on_failure(all_names) <- function(call, env) {
   x_nms <- names(eval(call$x, env))
   nms <- eval(call$nms, env)
@@ -60,6 +72,8 @@ all_apply <- function(xs, f) {
   }
   TRUE
 }
+
+
 any_apply <- function(xs, f) {
   for (x in xs) {
     if (f(x)) return(TRUE)
@@ -74,16 +88,19 @@ drop_last <- function(x) {
 
 compact <- function(x) Filter(Negate(is.null), x)
 
+# return x's name if x has names,else return blank space
 names2 <- function(x) {
   names(x) %||% rep("", length(x))
 }
 
+#DONE
 "%||%" <- function(x, y) if(is.null(x)) y else x
 
 is.wholenumber <- function(x, tol = .Machine$double.eps ^ 0.5) {
   abs(x - round(x)) < tol
 }
 
+# qustion!!
 as_df <- function(x) {
   class(x) <- "data.frame"
   attr(x, "row.names") <- c(NA_integer_, -length(x[[1]]))
@@ -109,6 +126,8 @@ named <- function(...) {
   x
 }
 
+
+#so cool
 unique_name <- local({
   i <- 0
 
